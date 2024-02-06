@@ -14,7 +14,7 @@ namespace MovieExercise
         {
             var getAllMoviesCategory = from obj in database.MoviesCollections where obj.Category == Category select obj;
 
-            Console.WriteLine($"The movies of {Category} are :");
+            Console.WriteLine($"The movies of {Category} category are : ");
             foreach (var obj in getAllMoviesCategory)
             {
                 Console.WriteLine($"Movie Id: {obj.MovieID}, Movie Title: {obj.Title}");
@@ -32,21 +32,21 @@ namespace MovieExercise
         public void MoviesInBudget(double Budget)
         {
             var getMoviesWithinBudget = database.MoviesCollections.Where(x => x.Budget < Budget)
-                                       .Join(database.RatingCollection,
+                                       .GroupJoin(database.RatingCollection,
                                                             movies => movies.MovieID,
                                                             rating => rating.MovieId,
                                                             (movies, rating) => new
                                                             {
                                                                 movieName = movies.Title,
                                                                 budget = movies.Budget,
-                                                                ratings = rating.Stars
+                                                                ratings = rating.Select(x => x.Stars)
                                                             });
 
 
             Console.WriteLine($"The movies within the Budget of {Budget}: ");
             foreach (var obj in getMoviesWithinBudget)
             {
-                Console.WriteLine($"Movie Title: {obj.movieName}, Movie Budget: {obj.budget}, Movie Rating: {obj.ratings} ");
+                Console.WriteLine($"Movie Title: {obj.movieName}, Movie Budget: {obj.budget}, Ratings: {string.Join(", ", obj.ratings)} ");
             }
         }
 
@@ -108,26 +108,26 @@ namespace MovieExercise
             Console.WriteLine($"The highest paid actor is {highestPaidActor.Name} with {highestPaidActor.Salary}");
         }
 
-        public void GetMovieDetails()
-        {
-            var displayMovieInfo = database.MoviesCollections.Join(database.RatingCollection,
-                                                            movies => movies.MovieID,
-                                                            rating => rating.MovieId,
-                                                            (movies, rating) => new
-                                                            {
-                                                                movieId = movies.MovieID,
-                                                                movieName = movies.Title,
-                                                                budget = movies.Budget,
-                                                                releaseYear = movies.ReleaseYear,
-                                                                ratings = rating.Stars,
-                                                            });
+        //public void GetMovieDetails()
+        //{
+        //    var displayMovieInfo = database.MoviesCollections.Join(database.RatingCollection,
+        //                                                    movies => movies.MovieID,
+        //                                                    rating => rating.MovieId,
+        //                                                    (movies, rating) => new
+        //                                                    {
+        //                                                        movieId = movies.MovieID,
+        //                                                        movieName = movies.Title,
+        //                                                        budget = movies.Budget,
+        //                                                        releaseYear = movies.ReleaseYear,
+        //                                                        ratings = rating.Stars,
+        //                                                    });
 
-            foreach (var movie in displayMovieInfo)
-            {
-                Console.WriteLine($"Movie Id: {movie.movieId}, Movie Name: {movie.movieName}, Movie Budget: {movie.budget}" +
-                                  $" Release Year: {movie.releaseYear}, Ratings: {movie.ratings}");
-            }
-        }
+        //    foreach (var movie in displayMovieInfo)
+        //    {
+        //        Console.WriteLine($"Movie Id: {movie.movieId}, Movie Name: {movie.movieName}, Movie Budget: {movie.budget}" +
+        //                          $" Release Year: {movie.releaseYear}, Ratings: {movie.ratings}");
+        //    }
+        //}
 
         public void GetExtendedMovieDetails()
         {
@@ -165,11 +165,11 @@ namespace MovieExercise
                                                               ratings = rating.Select(x => x.Stars)
                                                           })
                                                           .GroupJoin(database.ActorsCollection,
-                                                          movierating => movierating.movieId,
+                                                          movieInfo => movieInfo.movieId,
                                                           actors => actors.MovieId,
-                                                          (movierating, actors) => new
+                                                          (movieInfo, actors) => new
                                                           {
-                                                              movierating,
+                                                              movieInfo,
                                                               actorId = actors.Select(x => x.ActorId)
                                                           });
                                                           
@@ -177,8 +177,10 @@ namespace MovieExercise
             foreach (var movie in displayMovieInfo)
             {
                 var names = database.Actors.Where(x => movie.actorId.Contains(x.ActorId)).Select(x => x.Name).ToList();
-                Console.WriteLine($"Movie Id: {movie.movierating.movieId}, Movie Name: {movie.movierating.movieName}, Movie Budget: {movie.movierating.budget}" +
-                                  $" Release Year: {movie.movierating.releaseYear}, Names: {string.Join(", ", names)} Ratings: {string.Join(", ", movie.movierating.ratings)} ");
+                Console.WriteLine($"Movie Id: {movie.movieInfo.movieId}, Movie Name: {movie.movieInfo.movieName}," +
+                                  $" Movie Budget: {movie.movieInfo.budget}, " +
+                                  $" Release Year: {movie.movieInfo.releaseYear}, Names: {string.Join(", ", names)}, " +
+                                  $"Ratings: {string.Join(", ", movie.movieInfo.ratings)} ");
             }
         }
     }

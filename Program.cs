@@ -26,10 +26,9 @@ namespace MovieExercise
             movieAnalysis.HighestPaidActor();
             Console.WriteLine();
             movieAnalysis.HighestPaidActorByOrder();
-            Console.WriteLine();
-            movieAnalysis.GetMovieDetails();
+            //Console.WriteLine();
+            //movieAnalysis.GetMovieDetails();
 
-            Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine();
             movieAnalysis.GetExtendedMovieDetails();
