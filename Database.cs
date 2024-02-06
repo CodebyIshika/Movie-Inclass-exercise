@@ -17,6 +17,7 @@ namespace MovieExercise
             new Movie() { MovieID = 5, Title = "RRR", Budget = 500000, Category = "Action", ReleaseYear = 2023},
         };
 
+        // many to many relation between actors and movies
         public List<MovieActors> ActorsCollection = new List<MovieActors>()
         { 
             new MovieActors() { MovieId = 1, ActorId = 1001 },

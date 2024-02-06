@@ -150,6 +150,7 @@ namespace MovieExercise
             }
         }
 
+        // groupjoin() is a combination of groupby and join
         public void GetMovieDetailsWithActors()
         {
             var displayMovieInfo = database.MoviesCollections.GroupJoin(database.RatingCollection,
@@ -168,26 +169,16 @@ namespace MovieExercise
                                                           actors => actors.MovieId,
                                                           (movierating, actors) => new
                                                           {
-                                                              movierating, 
+                                                              movierating,
                                                               actorId = actors.Select(x => x.ActorId)
-                                                          })
-                                                          .Join(database.Actors,
-                                                          movieratingactors => movieratingactors.actorId.First(),
-                                                          actors => actors.ActorId,
-                                                          (movieratingactors, actors) => new
-                                                          {
-                                                              movieratingactors.movierating,
-                                                              //movieratingactors.movieName,
-                                                              //movieratingactors.budget,
-                                                              //movieratingactors.releaseYear,
-                                                              //movieratingactors.ratings,
-                                                              actorNames = database.Actors.ForEach(x => x.ActorId == movieratingactors.actorId).Select(x => x.Name).ToList()
                                                           });
+                                                          
 
             foreach (var movie in displayMovieInfo)
             {
+                var names = database.Actors.Where(x => movie.actorId.Contains(x.ActorId)).Select(x => x.Name).ToList();
                 Console.WriteLine($"Movie Id: {movie.movierating.movieId}, Movie Name: {movie.movierating.movieName}, Movie Budget: {movie.movierating.budget}" +
-                                  $" Release Year: {movie.movierating.releaseYear}, Names: {string.Join(", ", movie.actorNames)} Ratings: {string.Join(", ", movie.movierating.ratings)} ");
+                                  $" Release Year: {movie.movierating.releaseYear}, Names: {string.Join(", ", names)} Ratings: {string.Join(", ", movie.movierating.ratings)} ");
             }
         }
     }

@@ -35,6 +35,7 @@ namespace MovieExercise
             movieAnalysis.GetExtendedMovieDetails();
 
             Console.WriteLine();
+            Console.WriteLine();
             Console.WriteLine(" All movie details with actors-----------");
             Console.WriteLine();
             movieAnalysis.GetMovieDetailsWithActors();
